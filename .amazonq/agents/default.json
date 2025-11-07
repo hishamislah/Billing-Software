@@ -1,0 +1,74 @@
+{
+  "name": "q_ide_default",
+  "description": "Default agent configuration",
+  "prompt": "",
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.supabase.com/mcp?project_ref=xbacykwmndfchcuwkalr&features=docs%2Caccount%2Cdatabase%2Cdebugging%2Cdevelopment%2Cfunctions%2Cbranching%2Cstorage"
+      ],
+      "timeout": 60000,
+      "disabled": false
+    }
+  },
+  "tools": [
+    "fs_read",
+    "execute_bash",
+    "fs_write",
+    "report_issue",
+    "use_aws",
+    "@supabase"
+  ],
+  "toolAliases": {},
+  "allowedTools": [
+    "fs_read",
+    "report_issue",
+    "use_aws",
+    "execute_bash",
+    "fs_write",
+    "@supabase/search_docs",
+    "@supabase/list_tables",
+    "@supabase/list_extensions",
+    "@supabase/list_migrations",
+    "@supabase/apply_migration",
+    "@supabase/execute_sql",
+    "@supabase/get_logs",
+    "@supabase/get_advisors",
+    "@supabase/get_project_url",
+    "@supabase/get_anon_key",
+    "@supabase/generate_typescript_types",
+    "@supabase/list_edge_functions",
+    "@supabase/get_edge_function",
+    "@supabase/deploy_edge_function",
+    "@supabase/create_branch",
+    "@supabase/list_branches",
+    "@supabase/delete_branch",
+    "@supabase/merge_branch",
+    "@supabase/reset_branch",
+    "@supabase/rebase_branch",
+    "@supabase/list_storage_buckets",
+    "@supabase/get_storage_config",
+    "@supabase/update_storage_config"
+  ],
+  "toolsSettings": {
+    "use_aws": {
+      "preset": "readOnly"
+    },
+    "execute_bash": {
+      "preset": "readOnly"
+    }
+  },
+  "resources": [
+    "file://AmazonQ.md",
+    "file://README.md",
+    "file://.amazonq/rules/**/*.md"
+  ],
+  "hooks": {
+    "agentSpawn": [],
+    "userPromptSubmit": []
+  },
+  "useLegacyMcpJson": true
+}
