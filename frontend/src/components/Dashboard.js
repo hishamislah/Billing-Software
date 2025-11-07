@@ -111,6 +111,38 @@ const Dashboard = ({ onLogout }) => {
         </div>
       </aside>
 
+      {/* Mobile Bottom Navigation */}
+      <nav className="mobile-bottom-nav">
+        <button
+          className={`mobile-nav-item ${activeSection === 'dashboard' ? 'active' : ''}`}
+          onClick={() => setActiveSection('dashboard')}
+        >
+          <span className="mobile-nav-icon">📊</span>
+          <span className="mobile-nav-label">Dashboard</span>
+        </button>
+        <button
+          className={`mobile-nav-item ${activeSection === 'account-map' ? 'active' : ''}`}
+          onClick={() => setActiveSection('account-map')}
+        >
+          <span className="mobile-nav-icon">🗺️</span>
+          <span className="mobile-nav-label">Orders</span>
+        </button>
+        <button
+          className={`mobile-nav-item ${activeSection === 'invoices' ? 'active' : ''}`}
+          onClick={() => setActiveSection('invoices')}
+        >
+          <span className="mobile-nav-icon">📄</span>
+          <span className="mobile-nav-label">Invoices</span>
+        </button>
+        <button
+          className={`mobile-nav-item ${activeSection === 'customers' ? 'active' : ''}`}
+          onClick={() => setActiveSection('customers')}
+        >
+          <span className="mobile-nav-icon">👥</span>
+          <span className="mobile-nav-label">Customers</span>
+        </button>
+      </nav>
+
       {/* Main Content */}
       <main className="dashboard-main">
         {activeSection === 'account-map' && <AccountMap />}

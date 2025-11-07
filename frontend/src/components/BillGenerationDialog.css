@@ -227,11 +227,70 @@
 }
 
 @media (max-width: 768px) {
+  .bill-dialog-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .bill-dialog-header {
+    padding: 16px;
+  }
+
+  .bill-dialog-header h2 {
+    font-size: 20px;
+  }
+
+  .bill-form {
+    padding: 16px;
+  }
+
+  .radio-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .items-section {
+    padding: 16px;
+  }
+
   .item-row {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .remove-item-btn {
+    width: 100%;
+    border-radius: 6px;
+    height: 40px;
   }
 
   .charges-section {
     grid-template-columns: 1fr;
+  }
+
+  .bill-summary {
+    padding: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+  .preview-section {
+    padding: 16px;
+  }
+
+  .preview-actions {
+    flex-direction: column;
+  }
+
+  .preview-actions button {
+    width: 100%;
   }
 }

@@ -28,6 +28,27 @@
   position: relative;
 }
 
+@media (max-width: 768px) {
+  .login-container {
+    padding: 16px;
+  }
+  
+  .login-card {
+    padding: 32px 24px;
+    border-radius: 16px;
+  }
+  
+  .login-title {
+    font-size: 24px;
+  }
+  
+  .theme-button {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}
+
 .dark .login-card {
   background: #1a1a1a;
   border: 1px solid #333;
