@@ -10,8 +10,10 @@
 - **Responsive Design** that works on all screen sizes
 
 ### User Flow
-1. User logs in with credentials (admin@vazhemadom.com / password)
-2. After successful login, automatically redirected to dashboard
+## Test Login Flow
+
+1. User logs in with credentials (admin@tradebazar.com / password)
+2. After successful authentication, user is redirected to Dashboard
 3. Dashboard displays user email and system statistics
 4. User can toggle dark/light mode
 5. User can logout to return to login page
@@ -48,7 +50,7 @@
 
 3. **Access Application**:
    - Open http://localhost:3000
-   - Login with: admin@vazhemadom.com / password
+   - Login with: admin@tradebazar.com / password
    - Dashboard will appear after successful login
 
 ## Design Features

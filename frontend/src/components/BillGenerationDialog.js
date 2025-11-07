@@ -44,6 +44,7 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
   const [additionalCharges, setAdditionalCharges] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [previewInvoiceNumber, setPreviewInvoiceNumber] = useState('TB-PREVIEW');
   const invoiceRef = useRef();
 
   const grossValue = items.reduce((sum, item) => sum + item.amount, 0);
@@ -105,6 +106,9 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
     try {
       const invoiceNumber = await getNextInvoiceNumber();
       
+      // Update the preview with the actual invoice number
+      setPreviewInvoiceNumber(invoiceNumber);
+      
       const invoiceData = {
         invoiceNumber,
         invoiceDate: new Date(),
@@ -131,8 +135,10 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
       // Show preview if not already showing
       if (!showPreview) {
         setShowPreview(true);
-        await new Promise(resolve => setTimeout(resolve, 500));
       }
+      
+      // Wait for the preview to update with new invoice number
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       // Wait for fonts to load
       if (document.fonts) {
@@ -243,7 +249,7 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
   };
 
   const invoiceData = {
-    invoiceNumber: 'TB-PREVIEW',
+    invoiceNumber: previewInvoiceNumber,
     invoiceDate: new Date(),
     orderNumber: `ORD${order.id}`,
     orderDate: order.created_at,

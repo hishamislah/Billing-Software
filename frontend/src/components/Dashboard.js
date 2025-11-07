@@ -46,7 +46,7 @@ const Dashboard = ({ onLogout }) => {
         <div className="sidebar-header">
           {sidebarExpanded && (
             <div className="brand-logo">
-              <h2>Vazhemadom</h2>
+              <h2>Trade Bazar</h2>
             </div>
           )}
           <div className="user-info">
@@ -119,7 +119,7 @@ const Dashboard = ({ onLogout }) => {
         {activeSection === 'dashboard' && (
           <div className="content-wrapper">
             <div className="welcome-section">
-              <h2>Welcome to Vazhemadom</h2>
+              <h2>Welcome to Trade Bazar</h2>
               <p>{user?.email}</p>
             </div>
 

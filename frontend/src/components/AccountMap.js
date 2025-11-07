@@ -264,7 +264,7 @@ const AccountMap = () => {
       <div className="account-map-header">
         <div className="header-content">
           <h1>Orders</h1>
-          <p className="header-subtitle">Manage your orders with Vazhemadom's comprehensive tracking system.</p>
+          <p className="header-subtitle">Manage your orders with Trade Bazar's comprehensive tracking system.</p>
         </div>
         <div className="header-actions">
           <div className="search-box">
