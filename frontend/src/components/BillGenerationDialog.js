@@ -76,37 +76,6 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
     setItems(items.filter((_, i) => i !== index));
   };
 
-  const getNextInvoiceNumber = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('invoices')
-        .select('invoice_number')
-        .ilike('invoice_number', 'TB-%')
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      if (error) {
-        console.warn('Error fetching last invoice:', error);
-        return 'TB-001';
-      }
-
-      if (!data || data.length === 0) {
-        return 'TB-001';
-      }
-
-      // Extract number from TB-XXX format
-      const lastInvoice = data[0].invoice_number;
-      const lastNumber = parseInt(lastInvoice.replace('TB-', '')) || 0;
-      const nextNumber = lastNumber + 1;
-      
-      // Format with leading zeros (TB-001, TB-002, etc.)
-      return `TB-${nextNumber.toString().padStart(3, '0')}`;
-    } catch (error) {
-      console.error('Error generating invoice number:', error);
-      return 'TB-001';
-    }
-  };
-
   const generatePDF = async () => {
     if (!manualInvoiceNumber.trim()) {
       alert('Please enter an invoice number');
