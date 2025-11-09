@@ -21,6 +21,7 @@ const AccountMap = () => {
     contact: '',
     address: '',
     gstNumber: 'N/A',
+    invoiceNumber: '',
     products: [{ productName: '', quantity: '', price: '' }]
   });
 
@@ -154,6 +155,7 @@ const AccountMap = () => {
         contact: orderForm.contact,
         address: orderForm.address,
         gst_number: orderForm.gstNumber,
+        invoice_number: orderForm.invoiceNumber || null,
         products: orderForm.products,
         status: 'Pending',
         comments: ''
@@ -167,6 +169,7 @@ const AccountMap = () => {
         contact: '',
         address: '',
         gstNumber: 'N/A',
+        invoiceNumber: '',
         products: [{ productName: '', quantity: '', price: '' }]
       });
     }
@@ -188,6 +191,7 @@ const AccountMap = () => {
       contact: order.contact,
       address: order.address,
       gstNumber: order.gst_number,
+      invoiceNumber: order.invoice_number || '',
       products: order.products || [{ productName: '', quantity: '', price: '' }]
     });
     setShowNewOrderForm(true);
@@ -203,6 +207,7 @@ const AccountMap = () => {
         contact: orderForm.contact,
         address: orderForm.address,
         gst_number: orderForm.gstNumber,
+        invoice_number: orderForm.invoiceNumber || null,
         products: orderForm.products
       })
       .eq('id', editingOrder);
@@ -216,6 +221,7 @@ const AccountMap = () => {
         contact: '',
         address: '',
         gstNumber: 'N/A',
+        invoiceNumber: '',
         products: [{ productName: '', quantity: '', price: '' }]
       });
     }
@@ -229,6 +235,7 @@ const AccountMap = () => {
       contact: '',
       address: '',
       gstNumber: 'N/A',
+      invoiceNumber: '',
       products: [{ productName: '', quantity: '', price: '' }]
     });
   };
@@ -337,6 +344,16 @@ const AccountMap = () => {
                   type="text"
                   name="gstNumber"
                   value={orderForm.gstNumber}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="form-group">
+                <label>Invoice Number (Optional):</label>
+                <input
+                  type="text"
+                  name="invoiceNumber"
+                  placeholder="e.g., TB-001"
+                  value={orderForm.invoiceNumber}
                   onChange={handleInputChange}
                 />
               </div>
@@ -504,9 +521,9 @@ const AccountMap = () => {
                         <button 
                           className="action-btn bill-btn-icon" 
                           onClick={(e) => { e.stopPropagation(); openBillDialog(order); }}
-                          title="Generate Bill"
+                          title={order.invoice_generated_at ? 'View Bill' : 'Generate Bill'}
                         >
-                          📝
+                          {order.invoice_generated_at ? '👁️' : '📝'}
                         </button>
                       </div>
                     </td>
@@ -592,7 +609,7 @@ const AccountMap = () => {
                           
                           <div className="details-actions">
                             <button className="bill-btn" onClick={(e) => { e.stopPropagation(); openBillDialog(order); }}>
-                              📝 Generate Bill
+                              {order.invoice_generated_at ? '👁️ View Bill' : '📝 Generate Bill'}
                             </button>
                           </div>
                         </div>

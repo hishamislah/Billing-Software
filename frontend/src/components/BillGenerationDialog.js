@@ -32,6 +32,13 @@ const numberToWords = (num) => {
 
 export default function BillGenerationDialog({ order, onClose, onBillGenerated }) {
   const [billType, setBillType] = useState('B2B');
+  const [manualInvoiceNumber, setManualInvoiceNumber] = useState(order.invoice_number || '');
+  const [invoiceDate, setInvoiceDate] = useState(
+    order.invoice_generated_at 
+      ? new Date(order.invoice_generated_at).toISOString().split('T')[0]
+      : new Date().toISOString().split('T')[0]
+  );
+  const isAlreadyGenerated = !!order.invoice_generated_at;
   const [items, setItems] = useState(
     order.products?.map((p, idx) => ({
       description: p.productName,
@@ -44,13 +51,12 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
   const [additionalCharges, setAdditionalCharges] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
   const [generating, setGenerating] = useState(false);
-  const [previewInvoiceNumber, setPreviewInvoiceNumber] = useState('TB-PREVIEW');
   const invoiceRef = useRef();
 
   const grossValue = items.reduce((sum, item) => sum + item.amount, 0);
   const netValue = grossValue - discount + additionalCharges;
-  const cgst = billType === 'B2B' ? netValue * 0.09 : 0;
-  const sgst = billType === 'B2B' ? netValue * 0.09 : 0;
+  const cgst = billType === 'B2B' ? netValue * 0.025 : 0;
+  const sgst = billType === 'B2B' ? netValue * 0.025 : 0;
   const totalAmount = netValue + cgst + sgst;
 
   const handleItemChange = (index, field, value) => {
@@ -102,18 +108,18 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
   };
 
   const generatePDF = async () => {
+    if (!manualInvoiceNumber.trim()) {
+      alert('Please enter an invoice number');
+      return;
+    }
+    
     setGenerating(true);
     try {
-      const invoiceNumber = await getNextInvoiceNumber();
-      
-      // Update the preview with the actual invoice number
-      setPreviewInvoiceNumber(invoiceNumber);
+      const invoiceNumber = manualInvoiceNumber.trim();
       
       const invoiceData = {
         invoiceNumber,
-        invoiceDate: new Date(),
-        orderNumber: `ORD${order.id}`,
-        orderDate: order.created_at,
+        invoiceDate: new Date(invoiceDate),
         customer: {
           name: order.customer_name,
           phone: order.contact,
@@ -203,10 +209,10 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
         fileName = null;
       }
 
-      // Save invoice record
-      const { error: insertError } = await supabase
+      // Save or update invoice record using upsert
+      const { error: upsertError } = await supabase
         .from('invoices')
-        .insert([{
+        .upsert({
           invoice_number: invoiceNumber,
           order_id: order.id,
           bill_type: billType,
@@ -214,19 +220,22 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
           total_amount: totalAmount,
           invoice_data: invoiceData,
           pdf_path: fileName
-        }]);
+        }, {
+          onConflict: 'invoice_number'
+        });
 
-      if (insertError) {
-        console.error('Insert error:', insertError);
-        throw new Error(`Failed to save invoice: ${insertError.message}`);
+      if (upsertError) {
+        console.error('Upsert error:', upsertError);
+        throw new Error(`Failed to save invoice: ${upsertError.message}`);
       }
 
-      // Update order status
+      // Update order with invoice details
       const { error: updateError } = await supabase
         .from('orders')
         .update({ 
           status: 'Completed',
-          invoice_number: invoiceNumber
+          invoice_number: invoiceNumber,
+          invoice_generated_at: new Date().toISOString()
         })
         .eq('id', order.id);
 
@@ -238,7 +247,12 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
       pdf.save(`Invoice_${invoiceNumber.replace(/\//g, '_')}.pdf`);
 
       alert('Bill generated successfully!');
-      if (onBillGenerated) onBillGenerated();
+      
+      // Refresh orders to update button state
+      if (onBillGenerated) {
+        await onBillGenerated();
+      }
+      
       onClose();
     } catch (error) {
       console.error('Error generating bill:', error);
@@ -249,10 +263,8 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
   };
 
   const invoiceData = {
-    invoiceNumber: previewInvoiceNumber,
-    invoiceDate: new Date(),
-    orderNumber: `ORD${order.id}`,
-    orderDate: order.created_at,
+    invoiceNumber: manualInvoiceNumber.trim() || 'PREVIEW',
+    invoiceDate: new Date(invoiceDate),
     customer: {
       name: order.customer_name,
       phone: order.contact,
@@ -275,12 +287,34 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
     <div className="modal-overlay">
       <div className="bill-dialog-content">
         <div className="bill-dialog-header">
-          <h2>{showPreview ? 'Invoice Preview' : 'Generate Bill'}</h2>
+          <h2>{showPreview ? 'Invoice Preview' : (isAlreadyGenerated ? 'View Bill' : 'Generate Bill')}</h2>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
 
         {!showPreview ? (
           <div className="bill-form">
+            <div className="form-group">
+              <label>Invoice Number:</label>
+              <input
+                type="text"
+                placeholder="Enter invoice number (e.g., TB-001)"
+                value={manualInvoiceNumber}
+                onChange={(e) => setManualInvoiceNumber(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Invoice Date:</label>
+              <input
+                type="date"
+                value={invoiceDate}
+                onChange={(e) => setInvoiceDate(e.target.value)}
+                disabled={isAlreadyGenerated}
+                required
+              />
+            </div>
+
             <div className="form-group">
               <label>Bill Type:</label>
               <div className="radio-group">
@@ -291,7 +325,7 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
                     checked={billType === 'B2B'}
                     onChange={(e) => setBillType(e.target.value)}
                   />
-                  B2B (with 18% GST)
+                  B2B (with 5% GST)
                 </label>
                 <label>
                   <input
@@ -383,11 +417,11 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
               {billType === 'B2B' && (
                 <>
                   <div className="summary-row">
-                    <span>CGST (9%):</span>
+                    <span>CGST (2.5%):</span>
                     <span>₹{cgst.toFixed(2)}</span>
                   </div>
                   <div className="summary-row">
-                    <span>SGST (9%):</span>
+                    <span>SGST (2.5%):</span>
                     <span>₹{sgst.toFixed(2)}</span>
                   </div>
                 </>
@@ -403,7 +437,7 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
                 Preview Bill
               </button>
               <button type="button" onClick={generatePDF} className="generate-btn" disabled={generating}>
-                {generating ? 'Generating...' : 'Generate Bill'}
+                {generating ? 'Generating...' : (isAlreadyGenerated ? 'Regenerate Bill' : 'Generate Bill')}
               </button>
             </div>
           </div>
@@ -417,7 +451,7 @@ export default function BillGenerationDialog({ order, onClose, onBillGenerated }
                 Back to Edit
               </button>
               <button onClick={generatePDF} className="generate-btn" disabled={generating}>
-                {generating ? 'Generating...' : 'Generate & Download PDF'}
+                {generating ? 'Generating...' : (isAlreadyGenerated ? 'Download PDF' : 'Generate & Download PDF')}
               </button>
             </div>
           </div>

@@ -12,7 +12,7 @@ export default function TaxInvoice({ invoiceData }) {
               <h1>TAX INVOICE</h1>
               <h2>TRADE BAZAR</h2>
               <p>Home Centre Building, Vayaskara P.O, Kottayam-686001</p>
-              <p>Contact: 9544023493, 9496423493</p>
+              <p>Contact: 8304904752, 9496423493</p>
               <p><strong>GST No: 32BSOPA1799R1Z1</strong></p>
             </div>
             <div className="invoice-divider"></div>
@@ -25,7 +25,7 @@ export default function TaxInvoice({ invoiceData }) {
             <div className="invoice-header">
               <h2>TRADE BAZAR</h2>
               <p>Home Centre Building, Vayaskara P.O, Kottayam-686001</p>
-              <p>Contact: 9544023493, 9496423493</p>
+              <p>Contact: 8304904752, 9496423493</p>
             </div>
             <div className="invoice-divider"></div>
           </>
@@ -36,8 +36,6 @@ export default function TaxInvoice({ invoiceData }) {
           <div>
             <p><strong>Invoice No:</strong> {invoiceData.invoiceNumber}</p>
             <p><strong>Invoice Date:</strong> {new Date(invoiceData.invoiceDate).toLocaleDateString('en-GB')}</p>
-            <p><strong>Order No:</strong> {invoiceData.orderNumber}</p>
-            <p><strong>Order Date:</strong> {new Date(invoiceData.orderDate).toLocaleDateString('en-GB')}</p>
           </div>
           <div>
             <p><strong>Customer Name:</strong> {invoiceData.customer.name}</p>
@@ -98,11 +96,11 @@ export default function TaxInvoice({ invoiceData }) {
           {invoiceData.billType === 'B2B' && (
             <>
               <div className="invoice-total-row">
-                <span><strong>CGST (9%):</strong></span>
+                <span><strong>CGST (2.5%):</strong></span>
                 <span>{invoiceData.cgst.toFixed(2)}</span>
               </div>
               <div className="invoice-total-row">
-                <span><strong>SGST (9%):</strong></span>
+                <span><strong>SGST (2.5%):</strong></span>
                 <span>{invoiceData.sgst.toFixed(2)}</span>
               </div>
             </>
@@ -143,12 +141,12 @@ export default function TaxInvoice({ invoiceData }) {
           <h3>Payment Details</h3>
           <div className="invoice-payment-info">
             <p>Gpay No: <strong>8304904752</strong></p>
-            <p>Account No: <strong>10250100272045</strong></p>
-            <p>Account Name: <strong>Islah. S. A</strong></p>
+            <p>Account No: <strong>10250200108016</strong></p>
+            <p>Account Name: <strong>Trade Bazar</strong></p>
             <p>Bank: <strong>Federal Bank</strong></p>
-            <p>Branch: <strong>Main</strong></p>
+            <p>Branch: <strong>Kottayam Main</strong></p>
             <p>IFSC Code: <strong>FDRL0001025</strong></p>
-            <p>Contact no. <strong>9544023493</strong></p>
+            <p>Contact no. <strong>8304904752</strong></p>
           </div>
         </div>
       </div>

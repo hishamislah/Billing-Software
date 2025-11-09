@@ -293,4 +293,16 @@
   .preview-actions button {
     width: 100%;
   }
+  
+  /* Keep invoice at full A4 size on mobile */
+  .preview-section .invoice-container,
+  .preview-section .invoice-wrapper {
+    width: 210mm !important;
+    min-width: 210mm !important;
+    transform: scale(1) !important;
+  }
+  
+  .preview-section {
+    overflow-x: auto;
+  }
 }
